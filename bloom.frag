@@ -57,7 +57,7 @@ void main() {
   mixed.g += 0.6;
   mixed.b += 0.6;
 
-  mixed.a *= 0.5;
+  mixed.a *= 0.45;
   //mixed *= 1.5;
 
   gl_FragColor = mixed;

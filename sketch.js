@@ -172,7 +172,7 @@ function draw() {
 
 
   //image(pg, -windowWidth/2 + textSpacing/2, -windowHeight/2);
-
+/*
   // set the shader for our first pass
   pass1.shader(blurH);
 
@@ -220,6 +220,8 @@ function draw() {
 
   //scale(-1, 1);
   image(pg, -windowWidth/2, -windowHeight/2);
+*/
+image(pg, -windowWidth/2, -windowHeight/2);
 
   var frequ = 1;
 
