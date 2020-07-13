@@ -41,6 +41,8 @@ let bgColor = [0, 84, 158];
 
 let info;
 
+let vid;
+
 function preload() {
   // Load model with normalise parameter set to true
   //speakers = loadModel('assets/speakers.obj', true);
@@ -60,16 +62,21 @@ function preload() {
   //ear = loadModel('assets/ear.obj', true);
 
   // load the shader definitions from files
-  theShader = loadShader('shader.vert', 'shader.frag');
+  theShader = loadShader('shader.vert', 'shader_organic.frag');
   matcap = loadImage("matcap.png");
 
   font = loadFont('sofia/Sofia-Regular.otf');
 
-  blurH = loadShader('base.vert', 'blur.frag');
-  blurV = loadShader('base.vert', 'blur.frag');
-  bloom = loadShader('base.vert', 'bloom.frag');
+  //blurH = loadShader('base.vert', 'blur.frag');
+  //blurV = loadShader('base.vert', 'blur.frag');
+  //bloom = loadShader('base.vert', 'bloom.frag');
 
   loadStrings('info.txt', loadInfoString);
+
+  vid = createVideo(
+    ['Pferd Hü Hot.mp4'],
+    vidLoad
+  );
 
 }
 
@@ -79,8 +86,8 @@ function loadInfoString(result) {
 }
 
 function setup() {
-  pg = createGraphics(windowWidth, windowHeight, WEBGL );
-  pg.scale(0.5, 0.5);
+  //pg = createGraphics(windowWidth, windowHeight, WEBGL );
+  //scale(0.5, 0.5);
   createCanvas(windowWidth, windowHeight, WEBGL);
 
   for(var i=0; i<12 ; i++){
@@ -93,16 +100,22 @@ function setup() {
   textAlign(CENTER, CENTER);
 
   // initialize the createGraphics layers
-  pass1 = createGraphics(windowWidth, windowHeight, WEBGL);
-  pass2 = createGraphics(windowWidth, windowHeight, WEBGL);
-  bloomPass = createGraphics(windowWidth, windowHeight, WEBGL);
+  //pass1 = createGraphics(windowWidth, windowHeight, WEBGL);
+  //pass2 = createGraphics(windowWidth, windowHeight, WEBGL);
+  //bloomPass = createGraphics(windowWidth, windowHeight, WEBGL);
 
   // turn off the cg layers stroke
-  pass1.noStroke();
-  pass2.noStroke();
-  bloomPass.noStroke();
+  //pass1.noStroke();
+  //pass2.noStroke();
+  //bloomPass.noStroke();
 
 }
+
+/*
+function vidLoad() {
+  vid.loop();
+  vid.volume(0);
+}*/
 
 
 function draw() {
@@ -148,26 +161,27 @@ function draw() {
 
     //line(0, txtY*1.2, mX, mY);
     var spacingSin = textSpacing + sin(frameCount/1.7) * textSpacing * 0.1;
-    pg.clear();
+    clear();
       //hello();
-    pg.noStroke();
+    noStroke();
+    scale(0.5, 0.5)
   //stroke(sin(frameCount) * 255, sin(frameCount + 100) * 255, sin(frameCount+ 235325) * 255);
   for(var i=0; i < 6; i++){
-    pg.push();
+    push();
 
     if(drop){
-      pg.translate(-(i-2.5)* acc, 0, 0);
+      translate(-(i-2.5)* acc, 0, 0);
     }
-    pg.translate((i-2.5) * spacingSin, randDisplace[i] * sin(frameCount) - threeDTextOffset,  randDisplace[i+6] * sin(frameCount));
-    pg.rotateX(-yOffset + Math.PI);
-    pg.rotateY(-xOffset + Math.PI);
-    pg.scale(0.9 + 0.4 * sin(frameCount/randDisplace[i]), 0.8, 0.8)
-    pg.shader(theShader);
+    translate((i-2.5) * spacingSin, randDisplace[i] * sin(frameCount) - threeDTextOffset,  randDisplace[i+6] * sin(frameCount));
+    rotateX(-yOffset * 45 + 180);
+    rotateY(-xOffset * 45 +180);
+    scale(0.9 + 0.4 * sin(frameCount/randDisplace[i]), 0.8, 0.8)
+    shader(theShader);
     theShader.setUniform("iResolution", [width, height]);
     theShader.setUniform("iFrame", frameCount);
     theShader.setUniform("iMouse", [mouseX, map(mouseY, 0, height, height, 0)]);
-    pg.model(title3d[i]);
-    pg.pop();
+    model(title3d[i]);
+    pop();
   }
 
 
@@ -221,7 +235,7 @@ function draw() {
   //scale(-1, 1);
   image(pg, -windowWidth/2, -windowHeight/2);
 */
-image(pg, -windowWidth/2, -windowHeight/2);
+//image(pg, -windowWidth/2, -windowHeight/2);
 
   var frequ = 1;
 
