@@ -80,7 +80,7 @@ void main() {
 
   // Normalized pixel coordinates (from 0 to 1)
   vec2 uv = gl_FragCoord.xy/iResolution.xy;
-  uv=uv/4.0+.5;
+  uv=uv/12.0 + sin(float(iFrame)/10000000.0) * 20.0 +.5 + iMouse/50000.0;
   uv-=iResolution.xy/4.0;
 
   vec3 col = vec3(0.0);
@@ -97,7 +97,7 @@ void main() {
 
  for(int i = 0; i < 16; i++){
       float i2 = float(i)*1.0;
-        col.r+=noise(uv.xyy*(32.0)+col.rgb+t*sign(sin(i2/3.0)));
+        col.r+=noise(uv.xyy*(31.0)+col.rgb+t*sign(sin(i2/3.0)));
         col.g+=noise(uv.xyx*(32.0)+col.rgb+t*sign(sin(i2/3.0)));
         col.b+=noise(uv.yyx*(32.0)+col.rgb+t*sign(sin(i2/3.0)));
       }
@@ -122,28 +122,60 @@ void main() {
       // Sample the texture
       vec4 color = texture2D(uMatcapTexture, uv2);
 
+      color *= 1.5;
+
       vec3 matcapColorHSV = rgb2hsv(vec3(color.r, color.g, color.b));
-      matcapColorHSV.g *= 2.0;
-      matcapColorHSV.b *= 1.5;
-      matcapColorHSV.r = 0.5;
+      matcapColorHSV.r = 1.0;
+      matcapColorHSV.g *= 1.0;
+      matcapColorHSV.b *= 1.0;
       vec4 matcapColorRGB = vec4(hsv2rgb(matcapColorHSV), 1.0);
 
       vec3 noiseColorHSV = rgb2hsv(vec3(col.r, col.g, col.b));
-      noiseColorHSV.g *= 2.0;
-      noiseColorHSV.b *= 1.5;
-      noiseColorHSV.r = 0.0 + sin(float(iFrame)*0.01)* 0.2;
+      //noiseColorHSV.r = sin(float(iFrame)*0.01);
+      noiseColorHSV.g *= 1.0;
+      noiseColorHSV.b *= 0.8;
       vec4 noiseColorRGB = vec4(hsv2rgb(noiseColorHSV), 1.0);
+      noiseColorRGB = mix(vec4(col, 1.0), noiseColorRGB, 0.5);
+      //noiseColorRGB *= 2.3;
+      //noiseColorRGB -= 1.0;
 
+      float blendMask = (matcapColorRGB.r + matcapColorRGB.g + matcapColorRGB.b) / 3.0;
+      blendMask = -blendMask + 1.2;
+      blendMask *= 2.0;
+      blendMask -= 1.0;
+      blendMask = blendMask * 0.5 + blendMask * sin(float(iFrame)*0.05)* 0.5;
+
+      vec3 matcapColorHSV2 = rgb2hsv(vec3(color.r, color.g, color.b));
+      //matcapColorHSV2.r = 1.0;
+      matcapColorHSV2.g *= 2.0;
+      //matcapColorHSV2.b *= 1.0;
+      vec4 matcapColorRGB2 = vec4(hsv2rgb(matcapColorHSV2), 1.0);
+      //matcapColorRGB2.r -= 0.4;
+      matcapColorRGB2.b *= 0.5;
+      matcapColorRGB2 -= -2.0;
 
       // Output to screen
       //vec4 differenceColor = blendDifference(vec3)
-      vec4 mixColor = mix( vec4(col,1.0), matcapColorRGB, (col.r+col.g+col.b)/3.0 * 0.8);
+      vec4 mixColor = mix( noiseColorRGB, matcapColorRGB2, 0.2);
 
 
       vec3 mixColorHSV = rgb2hsv(vec3(mixColor.r, mixColor.g, mixColor.b));
-      //mixColorHSV.r = 0.5 + sin(float(iFrame)*0.01)* 0.5;
+      mixColorHSV.b = 1.0; //+ sin(float(iFrame)*0.05)* 0.1;
       vec4 mixColorRGB = vec4(hsv2rgb(mixColorHSV), 1.0);
+      mixColorRGB *= 1.5;
+      mixColorRGB -= 0.5;
+      //mixColorRGB += 0.1;
+      //mixColorRGB *= 2.0;
+      //mixColorRGB -= 0.5;
+      /*
+      vec3 eyeDirection = normalize(vEye - surfacePosition);
+      vec3 lightDirection = normalize(lightPosition - surfacePosition);
+      vec3 normal = normalize(surfaceNormal);
 
+      float power = blinnPhongSpec(lightDirection, eyeDirection, normal, shininess);
+
+      gl_FragColor = vec4(power,power,power,1.0);
+      */
 
       gl_FragColor = mixColorRGB;
 }

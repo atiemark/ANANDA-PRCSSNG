@@ -115,6 +115,6 @@ void main()
 
 
     // Output to screen
-		vec4 mixColor = mix( vec4(col,1.0), color, 1.0 );
+		vec4 mixColor = mix( vec4(col,1.0), color, 0.0);
     gl_FragColor = mixColor;
 }
